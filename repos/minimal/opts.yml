@@ -1,10 +1,10 @@
 gems:
-  all: &gems
-    - kramdown
-    - jekyll-sass-converter:'< 3'
-    - jekyll-coffeescript
-    - minima
   group:
+    stable:
+      - kramdown
+      - jekyll-sass-converter:'< 3'
+      - jekyll-coffeescript
+      - minima
     pages:
       - github-pages:'228'
       - webrick
