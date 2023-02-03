@@ -1,11 +1,9 @@
 name: 'Push'
 
 on:
-  # push:
-  #   branches:
-  #     - $default-branch
-  # schedule:
-  #   - cron: 2 4 10 * *
+  push:
+    tags:
+      - '**'
   workflow_dispatch:
 
 jobs:
@@ -16,18 +14,27 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
+        version: [latest, pages]  # "latest" Jekyll vs. GitHub "pages"
         variant: [jekyll, builder, minimal]
-        main_tag: [latest, pages]
         include:
-          - main_tag: latest
+          - version: latest
             tags: |
-              latest,priority=900
-              4.2.2,priority=700
-              4.0,priority=500
-              4,priority=300
-              stable,priority=100
-          - main_tag: pages
-            tags: pages
+              type=semver,pattern={{version}},priority=700
+              type=semver,pattern={{major}}.{{minor}},priority=500
+              type=semver,pattern={{major}},priority=300
+          - version: pages
+            tags: |
+              pages-v228
+          # Add suffixes for variants
+          - variant: builder
+            suffix: -builder
+          - variant: minimal
+            suffix: -minimal
+        exclude:
+          - version: pages
+            variant: jekyll
+          - version: pages
+            variant: builder
 
     steps:
       - name: Checkout Code
@@ -50,8 +57,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: rockstorm/jekyll-${{ matrix.variant }}
-          flavor: latest=false
+          images: rockstorm/jekyll
+          flavor: |
+           latest=${{  matrix.version == 'latest' &&  matrix.variant == 'jekyll' }}
+           suffix=${{ matrix.suffix }}
           tags: ${{ matrix.tags }}
 
       - name: Set up QEMU
@@ -69,7 +78,7 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v3
         with:
-          context: ./repos/${{ matrix.variant }}/cache/${{ matrix.main_tag }}
+          context: ./repos/${{ matrix.variant }}/cache/${{ matrix.version }}
           platforms: |
             linux/386
             linux/amd64
