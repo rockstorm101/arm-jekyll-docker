@@ -6,6 +6,5 @@ gems:
     - minima
   group:
     pages:
-      - *gems
-      - github-pages
-      - jekyll-github-metadata
+      - github-pages:'228'
+      - webrick
