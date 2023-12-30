@@ -1,10 +1,13 @@
-# Jekyll Docker
+# Jekyll on Docker ARM
 ![Version][b1]
 
 Clone of the [official Jekyll image][1] built for ARM and other
-platforms.
-
-Image source: https://github.com/rockstorm101/jekyll-docker
+platforms. Sadly, I will not maintain this repository:
+ * The Docker image for Jekyll is unmaintained upstream (almost 2 years dead
+   now)
+ * I prefer an approach where one uses customized Docker images for each
+   individual blog/site, which feels much more efficient. See
+   https://github.com/rockstorm101/jekyll-docker.
 
 [1]: https://github.com/envygeeks/jekyll-docker
 
